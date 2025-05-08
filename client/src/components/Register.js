@@ -33,7 +33,7 @@ const Register = () => {
 
         try {
             const { confirmPassword, ...registerData } = formData;
-            const res = await axios.post('http://192.168.0.146:5000/api/auth/register', registerData);
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, registerData);
             localStorage.setItem('token', res.data.token);
             navigate('/dashboard');
         } catch (err) {

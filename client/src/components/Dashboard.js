@@ -137,7 +137,7 @@ const Dashboard = () => {
     const fetchTransactions = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://192.168.0.146:5000/api/transactions', {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/transactions`, {
                 headers: { 'x-auth-token': token },
             });
             setTransactions(res.data);
@@ -149,7 +149,7 @@ const Dashboard = () => {
     const fetchCategories = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://192.168.0.146:5000/api/categories', {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/categories`, {
                 headers: { 'x-auth-token': token },
             });
             setCategories(res.data);
@@ -162,7 +162,7 @@ const Dashboard = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://192.168.0.146:5000/api/transactions', formData, {
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/transactions`, formData, {
                 headers: { 'x-auth-token': token },
             });
             setOpenDialog(false);
@@ -187,7 +187,7 @@ const Dashboard = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://192.168.0.146:5000/api/categories', categoryForm, {
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/categories`, categoryForm, {
                 headers: { 'x-auth-token': token },
             });
             setOpenCategoryDialog(false);
