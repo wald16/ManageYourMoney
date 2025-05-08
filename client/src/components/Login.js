@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
 import { useNavigate, Link } from 'react-router-dom';
 import {
     Container,
