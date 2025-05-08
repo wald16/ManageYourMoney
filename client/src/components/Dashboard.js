@@ -17,16 +17,58 @@ import {
     TextField,
     Box,
     IconButton,
+    Tooltip,
+    Menu,
+    MenuItem,
 } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import axios from 'axios';
-import { styled } from '@mui/material/styles';
+import { styled, keyframes } from '@mui/material/styles';
+
+// Dog animation
+const float = keyframes`
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+`;
+
+const wag = keyframes`
+  0% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+  100% { transform: rotate(-10deg); }
+`;
+
+const DogContainer = styled(Box)(({ theme }) => ({
+    position: 'fixed',
+    bottom: 20,
+    right: 20,
+    zIndex: 1000,
+    animation: `${float} 3s ease-in-out infinite`,
+    cursor: 'pointer',
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+        transform: 'scale(1.1)',
+    },
+}));
+
+const DogEmoji = styled('div')({
+    fontSize: '2.5rem',
+    userSelect: 'none',
+    position: 'relative',
+    '&::after': {
+        content: '"🐶"',
+        position: 'absolute',
+        right: '-15px',
+        bottom: '-5px',
+        fontSize: '1.5rem',
+        animation: `${wag} 0.5s ease-in-out infinite`,
+        transformOrigin: 'bottom right',
+    }
+});
 
 const SummaryCard = styled(Box)(({ theme, bgcolor }) => ({
     borderRadius: 16,
@@ -127,6 +169,20 @@ const Dashboard = () => {
     const handleDeleteAccount = () => {
         alert('Funcionalidad de eliminar cuenta próximamente.');
         handleMenuClose();
+    };
+    const [dogMessage, setDogMessage] = useState('');
+    const [showDogMessage, setShowDogMessage] = useState(false);
+
+    const dogMessages = [
+        "Ailu <3",
+        "te amo",
+        "cuchurrumin"
+    ];
+
+    const handleDogClick = () => {
+        setDogMessage(dogMessages[Math.floor(Math.random() * dogMessages.length)]);
+        setShowDogMessage(true);
+        setTimeout(() => setShowDogMessage(false), 2000);
     };
 
     useEffect(() => {
@@ -250,10 +306,22 @@ const Dashboard = () => {
                         <IconButton onClick={handleProfileClick} sx={{ ml: 1 }}>
                             <AccountCircleIcon />
                         </IconButton>
-                        <Menu anchorEl={anchorEl} open={openMenu} onClose={handleMenuClose}>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={openMenu}
+                            onClose={handleMenuClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                        >
                             <MenuItem onClick={handleChangePassword}>Cambiar contraseña</MenuItem>
                             <MenuItem onClick={handleDeleteAccount}>Eliminar cuenta</MenuItem>
-                            <MenuItem onClick={handleLogout} sx={{ color: 'red' }}>Cerrar sesión</MenuItem>
+                            <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>Cerrar sesión</MenuItem>
                         </Menu>
                     </Box>
                 </Box>
@@ -433,6 +501,16 @@ const Dashboard = () => {
                     </DialogActions>
                 </Dialog>
             </Container>
+            <DogContainer onClick={handleDogClick}>
+                <Tooltip
+                    open={showDogMessage}
+                    title={dogMessage}
+                    placement="left"
+                    arrow
+                >
+                    <DogEmoji>🐶</DogEmoji>
+                </Tooltip>
+            </DogContainer>
         </Box>
     );
 };
