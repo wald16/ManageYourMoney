@@ -25,6 +25,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import axios from 'axios';
 import { styled, keyframes } from '@mui/material/styles';
@@ -294,6 +295,20 @@ const Dashboard = () => {
         }).format(amount);
     };
 
+    const handleDeleteTransaction = async (transactionId) => {
+        if (window.confirm('¿Estás seguro de que quieres eliminar esta transacción?')) {
+            try {
+                const token = localStorage.getItem('token');
+                await axios.delete(`${process.env.REACT_APP_API_URL}/api/transactions/${transactionId}`, {
+                    headers: { 'x-auth-token': token },
+                });
+                fetchTransactions(); // Refresh the transactions list
+            } catch (err) {
+                console.error('Error deleting transaction:', err);
+            }
+        }
+    };
+
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: themeColors.background, color: themeColors.text, py: 2 }}>
             <Container maxWidth="sm" sx={{ px: { xs: 0.5, sm: 2 } }}>
@@ -381,16 +396,41 @@ const Dashboard = () => {
                                     <ResponsiveTableCell darkmode={darkMode.toString()}>Descripción</ResponsiveTableCell>
                                     <ResponsiveTableCell darkmode={darkMode.toString()}>Categoría</ResponsiveTableCell>
                                     <ResponsiveTableCell align="right" darkmode={darkMode.toString()}>Monto</ResponsiveTableCell>
+                                    <ResponsiveTableCell align="center" darkmode={darkMode.toString()}>Acciones</ResponsiveTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {transactions.map((transaction) => (
                                     <TableRow key={transaction.id}>
-                                        <ResponsiveTableCell darkmode={darkMode.toString()}>{new Date(transaction.date).toLocaleDateString('es-ES')}</ResponsiveTableCell>
-                                        <ResponsiveTableCell darkmode={darkMode.toString()}>{transaction.description}</ResponsiveTableCell>
-                                        <ResponsiveTableCell darkmode={darkMode.toString()}>{transaction.category_name}</ResponsiveTableCell>
-                                        <ResponsiveTableCell align="right" darkmode={darkMode.toString()} sx={{ color: transaction.type === 'income' ? themeColors.income : themeColors.expense, fontWeight: 700 }}>
+                                        <ResponsiveTableCell darkmode={darkMode.toString()}>
+                                            {new Date(transaction.date).toLocaleDateString('es-ES')}
+                                        </ResponsiveTableCell>
+                                        <ResponsiveTableCell darkmode={darkMode.toString()}>
+                                            {transaction.description}
+                                        </ResponsiveTableCell>
+                                        <ResponsiveTableCell darkmode={darkMode.toString()}>
+                                            {transaction.category_name}
+                                        </ResponsiveTableCell>
+                                        <ResponsiveTableCell align="right" darkmode={darkMode.toString()}
+                                            sx={{ color: transaction.type === 'income' ? themeColors.income : themeColors.expense, fontWeight: 700 }}>
                                             {formatCurrency(parseFloat(transaction.amount))}
+                                        </ResponsiveTableCell>
+                                        <ResponsiveTableCell align="center" darkmode={darkMode.toString()}>
+                                            <Tooltip title="Eliminar transacción">
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => handleDeleteTransaction(transaction.id)}
+                                                    sx={{
+                                                        color: 'error.main',
+                                                        '&:hover': {
+                                                            backgroundColor: 'error.light',
+                                                            color: 'white'
+                                                        }
+                                                    }}
+                                                >
+                                                    <DeleteIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
                                         </ResponsiveTableCell>
                                     </TableRow>
                                 ))}
