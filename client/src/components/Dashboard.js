@@ -20,12 +20,17 @@ import {
     Tooltip,
     Menu,
     MenuItem,
+    LinearProgress,
+    Card,
+    CardContent,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import axios from 'axios';
 import { styled, keyframes } from '@mui/material/styles';
@@ -137,6 +142,16 @@ const darkTheme = {
     legend: '#fff',
 };
 
+const GoalCard = styled(Card)(({ theme }) => ({
+    borderRadius: 16,
+    background: theme.palette.mode === 'dark' ? '#2d2d2d' : '#fff',
+    boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)',
+    transition: 'transform 0.2s ease-in-out',
+    '&:hover': {
+        transform: 'translateY(-2px)',
+    },
+}));
+
 const Dashboard = () => {
     const [transactions, setTransactions] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -173,6 +188,13 @@ const Dashboard = () => {
     };
     const [dogMessage, setDogMessage] = useState('');
     const [showDogMessage, setShowDogMessage] = useState(false);
+    const [goals, setGoals] = useState([]);
+    const [openGoalDialog, setOpenGoalDialog] = useState(false);
+    const [goalForm, setGoalForm] = useState({
+        name: '',
+        target: '',
+        type: 'expense', // or 'saving'
+    });
 
     const dogMessages = [
         "Ailu <3",
@@ -189,6 +211,7 @@ const Dashboard = () => {
     useEffect(() => {
         fetchTransactions();
         fetchCategories();
+        fetchGoals();
     }, []);
 
     const fetchTransactions = async () => {
@@ -212,6 +235,18 @@ const Dashboard = () => {
             setCategories(res.data);
         } catch (err) {
             console.error('Error fetching categories:', err);
+        }
+    };
+
+    const fetchGoals = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/goals`, {
+                headers: { 'x-auth-token': token },
+            });
+            setGoals(res.data);
+        } catch (err) {
+            console.error('Error fetching goals:', err);
         }
     };
 
@@ -307,6 +342,46 @@ const Dashboard = () => {
                 console.error('Error deleting transaction:', err);
             }
         }
+    };
+
+    const handleGoalSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/goals`, goalForm, {
+                headers: { 'x-auth-token': token },
+            });
+            setOpenGoalDialog(false);
+            fetchGoals();
+            setGoalForm({ name: '', target: '', type: 'expense' });
+        } catch (err) {
+            console.error('Error adding goal:', err);
+        }
+    };
+
+    const getGoalProgress = (goal) => {
+        if (goal.type === 'expense') {
+            const currentMonthExpenses = transactions
+                .filter(t => t.type === 'expense' && new Date(t.date).getMonth() === new Date().getMonth())
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            return Math.min((currentMonthExpenses / goal.target) * 100, 100);
+        } else {
+            const currentMonthSavings = transactions
+                .filter(t => t.type === 'income' && new Date(t.date).getMonth() === new Date().getMonth())
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0) -
+                transactions
+                    .filter(t => t.type === 'expense' && new Date(t.date).getMonth() === new Date().getMonth())
+                    .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            return Math.min((currentMonthSavings / goal.target) * 100, 100);
+        }
+    };
+
+    const getGoalMessage = (progress) => {
+        if (progress >= 100) return "¡Lo lograste! 🎉 ¡Eres increíble!";
+        if (progress >= 75) return "¡Casi lo logras! 💪 ¡Sigue así!";
+        if (progress >= 50) return "¡Vas por buen camino! 🌟";
+        if (progress >= 25) return "¡Sigue adelante! 💫";
+        return "¡Tú puedes! 💖";
     };
 
     return (
@@ -438,6 +513,55 @@ const Dashboard = () => {
                         </Table>
                     </TableContainer>
                 </SectionCard>
+                <SectionCard bgcolor={themeColors.card}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 700, flex: 1 }}>Mis Metas 💫</Typography>
+                        <BlueButton onClick={() => setOpenGoalDialog(true)} sx={{ ml: 1 }}>
+                            + Nueva Meta
+                        </BlueButton>
+                    </Box>
+                    <Grid container spacing={2}>
+                        {goals.map((goal) => {
+                            const progress = getGoalProgress(goal);
+                            return (
+                                <Grid item xs={12} sm={6} key={goal.id}>
+                                    <GoalCard>
+                                        <CardContent>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                                <EmojiEventsIcon sx={{ color: goal.type === 'expense' ? themeColors.expense : themeColors.income, mr: 1 }} />
+                                                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                                    {goal.name}
+                                                </Typography>
+                                            </Box>
+                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                                {goal.type === 'expense' ? 'Gasto máximo mensual' : 'Meta de ahorro mensual'}
+                                            </Typography>
+                                            <Typography variant="h6" sx={{ mb: 1, color: goal.type === 'expense' ? themeColors.expense : themeColors.income }}>
+                                                {formatCurrency(goal.target)}
+                                            </Typography>
+                                            <LinearProgress
+                                                variant="determinate"
+                                                value={progress}
+                                                sx={{
+                                                    height: 8,
+                                                    borderRadius: 4,
+                                                    backgroundColor: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                                                    '& .MuiLinearProgress-bar': {
+                                                        backgroundColor: progress >= 100 ? themeColors.income :
+                                                            goal.type === 'expense' ? themeColors.expense : themeColors.income
+                                                    }
+                                                }}
+                                            />
+                                            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+                                                {getGoalMessage(progress)}
+                                            </Typography>
+                                        </CardContent>
+                                    </GoalCard>
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
+                </SectionCard>
                 {/* Dialogs */}
                 <Dialog open={openCategoryDialog} onClose={() => setOpenCategoryDialog(false)} fullWidth maxWidth="sm">
                     <DialogTitle>Añadir Nueva Categoría</DialogTitle>
@@ -538,6 +662,46 @@ const Dashboard = () => {
                     <DialogActions>
                         <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
                         <BlueButton onClick={handleSubmit}>Añadir</BlueButton>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={openGoalDialog} onClose={() => setOpenGoalDialog(false)} fullWidth maxWidth="sm">
+                    <DialogTitle>Nueva Meta</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            margin="dense"
+                            name="name"
+                            label="Nombre de la meta"
+                            fullWidth
+                            value={goalForm.name}
+                            onChange={(e) => setGoalForm({ ...goalForm, name: e.target.value })}
+                            sx={{ mb: 2 }}
+                        />
+                        <TextField
+                            margin="dense"
+                            name="target"
+                            label="Monto objetivo"
+                            type="number"
+                            fullWidth
+                            value={goalForm.target}
+                            onChange={(e) => setGoalForm({ ...goalForm, target: e.target.value })}
+                            sx={{ mb: 2 }}
+                        />
+                        <TextField
+                            margin="dense"
+                            name="type"
+                            label="Tipo de meta"
+                            select
+                            fullWidth
+                            value={goalForm.type}
+                            onChange={(e) => setGoalForm({ ...goalForm, type: e.target.value })}
+                        >
+                            <MenuItem value="expense">Limitar gastos</MenuItem>
+                            <MenuItem value="saving">Meta de ahorro</MenuItem>
+                        </TextField>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenGoalDialog(false)}>Cancelar</Button>
+                        <BlueButton onClick={handleGoalSubmit}>Crear Meta</BlueButton>
                     </DialogActions>
                 </Dialog>
             </Container>

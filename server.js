@@ -34,8 +34,11 @@ const auth = require('./middleware/auth');
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/transactions', auth, require('./routes/transactions'));
 app.use('/api/categories', auth, require('./routes/categories'));
+app.use('/api/goals', auth, require('./routes/goals'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
-}); 
+});
+
+module.exports = { app, db }; 

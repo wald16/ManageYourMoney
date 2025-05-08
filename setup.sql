@@ -43,6 +43,17 @@ CREATE TABLE IF NOT EXISTS budgets (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Tabla de objetivos
+CREATE TABLE IF NOT EXISTS goals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    target DECIMAL(10,2) NOT NULL,
+    type ENUM('expense', 'savings') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- Insertar categorías por defecto para cada usuario
 INSERT INTO categories (name, type, user_id)
 SELECT 'Salary', 'income', id FROM users
