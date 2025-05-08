@@ -384,6 +384,20 @@ const Dashboard = () => {
         return "¡Tú puedes! 💖";
     };
 
+    const handleDeleteGoal = async (goalId) => {
+        if (window.confirm('¿Estás seguro de que quieres eliminar esta meta?')) {
+            try {
+                const token = localStorage.getItem('token');
+                await axios.delete(`${process.env.REACT_APP_API_URL}/api/goals/${goalId}`, {
+                    headers: { 'x-auth-token': token },
+                });
+                fetchGoals(); // Refresh the goals list
+            } catch (err) {
+                console.error('Error deleting goal:', err);
+            }
+        }
+    };
+
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: themeColors.background, color: themeColors.text, py: 2 }}>
             <Container maxWidth="sm" sx={{ px: { xs: 0.5, sm: 2 } }}>
@@ -527,11 +541,28 @@ const Dashboard = () => {
                                 <Grid item xs={12} sm={6} key={goal.id}>
                                     <GoalCard>
                                         <CardContent>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                                <EmojiEventsIcon sx={{ color: goal.type === 'expense' ? themeColors.expense : themeColors.income, mr: 1 }} />
-                                                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                                                    {goal.name}
-                                                </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, justifyContent: 'space-between' }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                    <EmojiEventsIcon sx={{ color: goal.type === 'expense' ? themeColors.expense : themeColors.income, mr: 1 }} />
+                                                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                                        {goal.name}
+                                                    </Typography>
+                                                </Box>
+                                                <Tooltip title="Eliminar meta">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleDeleteGoal(goal.id)}
+                                                        sx={{
+                                                            color: 'error.main',
+                                                            '&:hover': {
+                                                                backgroundColor: 'error.light',
+                                                                color: 'white'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <DeleteIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
                                             </Box>
                                             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                                                 {goal.type === 'expense' ? 'Gasto máximo mensual' : 'Meta de ahorro mensual'}
