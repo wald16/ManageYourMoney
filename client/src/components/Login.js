@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
 import { useNavigate, Link } from 'react-router-dom';
 import {
     Container,
@@ -10,6 +9,8 @@ import {
     Box,
 } from '@mui/material';
 import axios from 'axios';
+
+console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
 
 const Login = () => {
     const navigate = useNavigate();
