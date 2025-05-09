@@ -34,6 +34,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import axios from 'axios';
 import { styled, keyframes, useTheme } from '@mui/material/styles';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
 // Dog animation
 const float = keyframes`
@@ -150,6 +151,36 @@ const GoalCard = styled(Card)(({ theme }) => ({
     '&:hover': {
         transform: 'translateY(-2px)',
     },
+}));
+
+// Add a new animation for the event banner
+const glowAnimation = keyframes`
+  0% { box-shadow: 0 0 5px rgba(255, 77, 77, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(255, 77, 77, 0.8); }
+  100% { box-shadow: 0 0 5px rgba(255, 77, 77, 0.5); }
+`;
+
+const EventBanner = styled(Box)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #ff4d4d 30%, #ff8533 90%)',
+    color: '#fff',
+    padding: theme.spacing(2),
+    borderRadius: '12px',
+    marginBottom: theme.spacing(3),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    animation: `${glowAnimation} 2s ease-in-out infinite`,
+    position: 'relative',
+    overflow: 'hidden',
+    '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
+    }
 }));
 
 const Dashboard = () => {
@@ -415,7 +446,31 @@ const Dashboard = () => {
 
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: themeColors.background, color: themeColors.text, py: 2 }}>
-            <Container maxWidth="sm" sx={{ px: { xs: 0.5, sm: 2 } }}>
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                <EventBanner>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <LocalFireDepartmentIcon sx={{ fontSize: 40 }} />
+                        <Box>
+                            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                ¡Desfile Hoy! 🎉
+                            </Typography>
+                            <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                                Suerte en tu desfile, te amo ❤️
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                            {new Date().toLocaleDateString('es-ES', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </Typography>
+                    </Box>
+                </EventBanner>
+
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, mt: 1 }}>
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>Panel</Typography>
                     <Box>
