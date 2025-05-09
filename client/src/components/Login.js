@@ -7,8 +7,34 @@ import {
     Button,
     Typography,
     Box,
+    InputAdornment,
+    IconButton,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import PetsIcon from '@mui/icons-material/Pets';
 import axios from 'axios';
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+    marginTop: theme.spacing(8),
+    padding: theme.spacing(4),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: '20px',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
+}));
+
+const PawDecoration = styled(Box)(({ theme }) => ({
+    position: 'absolute',
+    width: '40px',
+    height: '40px',
+    opacity: 0.2,
+    color: theme.palette.primary.main,
+}));
 
 console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
 
@@ -19,6 +45,7 @@ const Login = () => {
         password: '',
     });
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,66 +64,98 @@ const Login = () => {
 
     return (
         <Container component="main" maxWidth="xs">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
-                    <Typography component="h1" variant="h5" align="center" gutterBottom>
-                        Login
+            <StyledPaper elevation={3}>
+                {/* Paw decorations */}
+                <PawDecoration sx={{ top: 20, left: 20, transform: 'rotate(-30deg)' }}>
+                    <PetsIcon fontSize="large" />
+                </PawDecoration>
+                <PawDecoration sx={{ top: 20, right: 20, transform: 'rotate(30deg)' }}>
+                    <PetsIcon fontSize="large" />
+                </PawDecoration>
+                <PawDecoration sx={{ bottom: 20, left: 20, transform: 'rotate(30deg)' }}>
+                    <PetsIcon fontSize="large" />
+                </PawDecoration>
+                <PawDecoration sx={{ bottom: 20, right: 20, transform: 'rotate(-30deg)' }}>
+                    <PetsIcon fontSize="large" />
+                </PawDecoration>
+
+                <Typography component="h1" variant="h4" sx={{ mb: 1, color: 'primary.main' }}>
+                    HOLA
+                </Typography>
+                <Typography variant="subtitle1" sx={{ mb: 3, color: 'text.secondary' }}>
+                    linda
+                </Typography>
+
+                {error && (
+                    <Typography color="error" align="center" gutterBottom>
+                        {error}
                     </Typography>
-                    {error && (
-                        <Typography color="error" align="center" gutterBottom>
-                            {error}
-                        </Typography>
-                    )}
-                    <form onSubmit={handleSubmit}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                            value={formData.email}
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            value={formData.password}
-                            onChange={handleChange}
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Sign In
-                        </Button>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Link to="/register" style={{ textDecoration: 'none' }}>
-                                <Typography variant="body2" color="primary">
-                                    Don't have an account? Sign Up
-                                </Typography>
-                            </Link>
-                        </Box>
-                    </form>
-                </Paper>
-            </Box>
+                )}
+
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email Address"
+                        name="email"
+                        autoComplete="email"
+                        autoFocus
+                        value={formData.email}
+                        onChange={handleChange}
+                        variant="outlined"
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type={showPassword ? 'text' : 'password'}
+                        id="password"
+                        autoComplete="current-password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        variant="outlined"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{
+                            mt: 3,
+                            mb: 2,
+                            py: 1.5,
+                            borderRadius: '10px',
+                            textTransform: 'none',
+                            fontSize: '1.1rem'
+                        }}
+                    >
+                        Sign In
+                    </Button>
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Link to="/register" style={{ textDecoration: 'none' }}>
+                            <Typography variant="body2" color="primary">
+                                Don't have an account? Sign Up
+                            </Typography>
+                        </Link>
+                    </Box>
+                </Box>
+            </StyledPaper>
         </Container>
     );
 };
