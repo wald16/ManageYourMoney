@@ -9,12 +9,26 @@ import PrivateRoute from './components/PrivateRoute';
 
 const theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: 'dark',
     primary: {
-      main: '#1976d2',
+      main: '#ff4d4d',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#ff8533',
+    },
+    background: {
+      default: '#121212',
+      paper: '#1a1a1a',
+    },
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          background: 'linear-gradient(145deg, #121212 0%, #1a1a1a 100%)',
+          minHeight: '100vh',
+        },
+      },
     },
   },
 });

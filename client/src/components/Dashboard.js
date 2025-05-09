@@ -33,7 +33,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import axios from 'axios';
-import { styled, keyframes } from '@mui/material/styles';
+import { styled, keyframes, useTheme } from '@mui/material/styles';
 
 // Dog animation
 const float = keyframes`
@@ -168,7 +168,8 @@ const Dashboard = () => {
         name: '',
         type: 'expense',
     });
-    const [darkMode, setDarkMode] = useState(false);
+    const theme = useTheme();
+    const [darkMode, setDarkMode] = useState(true);
     const themeColors = darkMode ? darkTheme : lightTheme;
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
@@ -408,18 +409,42 @@ const Dashboard = () => {
         }
     };
 
+    const handleThemeToggle = () => {
+        setDarkMode(!darkMode);
+    };
+
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: themeColors.background, color: themeColors.text, py: 2 }}>
             <Container maxWidth="sm" sx={{ px: { xs: 0.5, sm: 2 } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, mt: 1 }}>
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>Panel</Typography>
                     <Box>
-                        <IconButton onClick={() => setDarkMode((prev) => !prev)}>
-                            {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-                        </IconButton>
-                        <IconButton onClick={handleProfileClick} sx={{ ml: 1 }}>
-                            <AccountCircleIcon />
-                        </IconButton>
+                        <Tooltip title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
+                            <IconButton
+                                onClick={handleThemeToggle}
+                                sx={{
+                                    color: theme.palette.mode === 'dark' ? '#ff4d4d' : 'inherit',
+                                    '&:hover': {
+                                        color: '#ff8533',
+                                    }
+                                }}
+                            >
+                                {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Account">
+                            <IconButton
+                                onClick={handleProfileClick}
+                                sx={{
+                                    color: theme.palette.mode === 'dark' ? '#ff4d4d' : 'inherit',
+                                    '&:hover': {
+                                        color: '#ff8533',
+                                    }
+                                }}
+                            >
+                                <AccountCircleIcon />
+                            </IconButton>
+                        </Tooltip>
                         <Menu
                             anchorEl={anchorEl}
                             open={openMenu}

@@ -10,11 +10,18 @@ import {
     InputAdornment,
     IconButton,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { styled, keyframes } from '@mui/material/styles';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import PetsIcon from '@mui/icons-material/Pets';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import axios from 'axios';
+
+// Dragon fire animation
+const fireAnimation = keyframes`
+  0% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+  50% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+`;
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
     marginTop: theme.spacing(8),
@@ -26,14 +33,53 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     overflow: 'hidden',
     borderRadius: '20px',
     boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
+    background: 'linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%)',
+    color: '#fff',
 }));
 
-const PawDecoration = styled(Box)(({ theme }) => ({
-    position: 'absolute',
-    width: '40px',
-    height: '40px',
-    opacity: 0.2,
-    color: theme.palette.primary.main,
+const FireIcon = styled(LocalFireDepartmentIcon)(({ theme }) => ({
+    fontSize: '2rem',
+    color: '#ff4d4d',
+    animation: `${fireAnimation} 2s ease-in-out infinite`,
+    filter: 'drop-shadow(0 0 8px rgba(255, 77, 77, 0.6))',
+}));
+
+const CustomTextField = styled(TextField)(({ theme }) => ({
+    '& .MuiOutlinedInput-root': {
+        color: '#fff',
+        '& fieldset': {
+            borderColor: 'rgba(255, 255, 255, 0.23)',
+        },
+        '&:hover fieldset': {
+            borderColor: '#ff4d4d',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: '#ff4d4d',
+        },
+    },
+    '& .MuiInputLabel-root': {
+        color: 'rgba(255, 255, 255, 0.7)',
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+        color: '#ff4d4d',
+    },
+}));
+
+const CustomButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #ff4d4d 30%, #ff8533 90%)',
+    color: '#fff',
+    padding: '12px 24px',
+    borderRadius: '10px',
+    textTransform: 'none',
+    fontSize: '1.1rem',
+    fontWeight: 600,
+    boxShadow: '0 3px 12px rgba(255, 77, 77, 0.3)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #ff3333 30%, #ff6b1a 90%)',
+        boxShadow: '0 6px 20px rgba(255, 77, 77, 0.4)',
+        transform: 'translateY(-2px)',
+    },
 }));
 
 const Register = () => {
@@ -72,24 +118,28 @@ const Register = () => {
     return (
         <Container component="main" maxWidth="xs">
             <StyledPaper elevation={3}>
-                {/* Paw decorations */}
-                <PawDecoration sx={{ top: 20, left: 20, transform: 'rotate(-30deg)' }}>
-                    <PetsIcon fontSize="large" />
-                </PawDecoration>
-                <PawDecoration sx={{ top: 20, right: 20, transform: 'rotate(30deg)' }}>
-                    <PetsIcon fontSize="large" />
-                </PawDecoration>
-                <PawDecoration sx={{ bottom: 20, left: 20, transform: 'rotate(30deg)' }}>
-                    <PetsIcon fontSize="large" />
-                </PawDecoration>
-                <PawDecoration sx={{ bottom: 20, right: 20, transform: 'rotate(-30deg)' }}>
-                    <PetsIcon fontSize="large" />
-                </PawDecoration>
+                <FireIcon sx={{ mb: 2 }} />
 
-                <Typography component="h1" variant="h4" sx={{ mb: 1, color: 'primary.main' }}>
+                <Typography
+                    component="h1"
+                    variant="h4"
+                    sx={{
+                        mb: 1,
+                        color: '#ff4d4d',
+                        textShadow: '0 0 10px rgba(255, 77, 77, 0.5)',
+                        fontWeight: 700
+                    }}
+                >
                     CREA TU CUENTA
                 </Typography>
-                <Typography variant="subtitle1" sx={{ mb: 3, color: 'text.secondary' }}>
+                <Typography
+                    variant="subtitle1"
+                    sx={{
+                        mb: 3,
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontStyle: 'italic'
+                    }}
+                >
                     nashe
                 </Typography>
 
@@ -100,7 +150,7 @@ const Register = () => {
                 )}
 
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-                    <TextField
+                    <CustomTextField
                         margin="normal"
                         required
                         fullWidth
@@ -113,7 +163,7 @@ const Register = () => {
                         onChange={handleChange}
                         variant="outlined"
                     />
-                    <TextField
+                    <CustomTextField
                         margin="normal"
                         required
                         fullWidth
@@ -125,7 +175,7 @@ const Register = () => {
                         onChange={handleChange}
                         variant="outlined"
                     />
-                    <TextField
+                    <CustomTextField
                         margin="normal"
                         required
                         fullWidth
@@ -144,6 +194,7 @@ const Register = () => {
                                         aria-label="toggle password visibility"
                                         onClick={() => setShowPassword(!showPassword)}
                                         edge="end"
+                                        sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
                                     >
                                         {showPassword ? <VisibilityOff /> : <Visibility />}
                                     </IconButton>
@@ -151,7 +202,7 @@ const Register = () => {
                             ),
                         }}
                     />
-                    <TextField
+                    <CustomTextField
                         margin="normal"
                         required
                         fullWidth
@@ -169,6 +220,7 @@ const Register = () => {
                                         aria-label="toggle confirm password visibility"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                         edge="end"
+                                        sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
                                     >
                                         {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                                     </IconButton>
@@ -176,24 +228,26 @@ const Register = () => {
                             ),
                         }}
                     />
-                    <Button
+
+                    <CustomButton
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{
-                            mt: 3,
-                            mb: 2,
-                            py: 1.5,
-                            borderRadius: '10px',
-                            textTransform: 'none',
-                            fontSize: '1.1rem'
-                        }}
+                        sx={{ mt: 3, mb: 2 }}
                     >
                         Sign Up
-                    </Button>
+                    </CustomButton>
                     <Box sx={{ textAlign: 'center' }}>
                         <Link to="/login" style={{ textDecoration: 'none' }}>
-                            <Typography variant="body2" color="primary">
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: '#ff4d4d',
+                                    '&:hover': {
+                                        color: '#ff8533',
+                                    },
+                                }}
+                            >
                                 Already have an account? Sign In
                             </Typography>
                         </Link>
