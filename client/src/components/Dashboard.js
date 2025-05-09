@@ -222,7 +222,7 @@ const Dashboard = () => {
             });
             setTransactions(res.data);
         } catch (err) {
-            console.error('Error fetching transactions:', err);
+            handleApiError(err);
         }
     };
 
@@ -234,7 +234,7 @@ const Dashboard = () => {
             });
             setCategories(res.data);
         } catch (err) {
-            console.error('Error fetching categories:', err);
+            handleApiError(err);
         }
     };
 
@@ -246,7 +246,7 @@ const Dashboard = () => {
             });
             setGoals(res.data);
         } catch (err) {
-            console.error('Error fetching goals:', err);
+            handleApiError(err);
         }
     };
 
@@ -267,7 +267,7 @@ const Dashboard = () => {
                 type: 'expense',
             });
         } catch (err) {
-            console.error('Error adding transaction:', err);
+            handleApiError(err);
         }
     };
 
@@ -286,7 +286,7 @@ const Dashboard = () => {
             fetchCategories();
             setCategoryForm({ name: '', type: 'expense' });
         } catch (err) {
-            console.error('Error adding category:', err);
+            handleApiError(err);
         }
     };
 
@@ -339,7 +339,7 @@ const Dashboard = () => {
                 });
                 fetchTransactions(); // Refresh the transactions list
             } catch (err) {
-                console.error('Error deleting transaction:', err);
+                handleApiError(err);
             }
         }
     };
@@ -355,7 +355,7 @@ const Dashboard = () => {
             fetchGoals();
             setGoalForm({ name: '', target: '', type: 'expense' });
         } catch (err) {
-            console.error('Error adding goal:', err);
+            handleApiError(err);
         }
     };
 
@@ -393,8 +393,18 @@ const Dashboard = () => {
                 });
                 fetchGoals(); // Refresh the goals list
             } catch (err) {
-                console.error('Error deleting goal:', err);
+                handleApiError(err);
             }
+        }
+    };
+
+    const handleApiError = (err) => {
+        if (err.response && err.response.status === 401) {
+            alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        } else {
+            console.error(err);
         }
     };
 
