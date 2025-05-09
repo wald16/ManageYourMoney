@@ -167,8 +167,10 @@ const EventBanner = styled(Box)(({ theme }) => ({
     borderRadius: '12px',
     marginBottom: theme.spacing(3),
     display: 'flex',
-    alignItems: 'center',
+    flexDirection: { xs: 'column', sm: 'row' },
+    alignItems: { xs: 'flex-start', sm: 'center' },
     justifyContent: 'space-between',
+    gap: { xs: 1, sm: 0 },
     animation: `${glowAnimation} 2s ease-in-out infinite`,
     position: 'relative',
     overflow: 'hidden',
@@ -460,10 +462,9 @@ const Dashboard = () => {
                         </Box>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                        <Typography variant="body2" sx={{ opacity: 0.9, fontSize: '0.875rem' }}>
                             {new Date().toLocaleDateString('es-ES', {
                                 weekday: 'long',
-                                year: 'numeric',
                                 month: 'long',
                                 day: 'numeric'
                             })}
