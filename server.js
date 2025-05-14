@@ -26,11 +26,14 @@ db.connect((err) => {
     }
     console.log('Connected to MySQL database');
 });
+app.get('/api/ping', (req, res) => {
+    res.json({ message: 'pong' });
+});
 
 // Import auth middleware
 const auth = require('./middleware/auth');
 
-// Routes
+// Route
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/transactions', auth, require('./routes/transactions'));
 app.use('/api/categories', auth, require('./routes/categories'));
