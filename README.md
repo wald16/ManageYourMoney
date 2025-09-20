@@ -38,7 +38,7 @@ cd ..
 
 4. Create a MySQL database and run the schema:
 ```bash
-mysql -u root -p < database.sql
+mysql -u root -p < setup.sql
 ```
 
 5. Create a `.env` file in the root directory with the following variables:

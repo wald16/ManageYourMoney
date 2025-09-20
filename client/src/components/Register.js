@@ -124,6 +124,7 @@ const Register = () => {
                     component="h1"
                     variant="h4"
                     sx={{
+                        paddingTop: 1,
                         mb: 1,
                         color: '#ff4d4d',
                         textShadow: '0 0 10px rgba(255, 77, 77, 0.5)',
@@ -140,7 +141,7 @@ const Register = () => {
                         fontStyle: 'italic'
                     }}
                 >
-                    nashe
+                    create your account
                 </Typography>
 
                 {error && (

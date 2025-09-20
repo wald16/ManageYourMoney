@@ -152,13 +152,14 @@ const Login = () => {
                     component="h1"
                     variant="h4"
                     sx={{
+                        paddingTop: 2,
                         mb: 1,
                         color: '#ff4d4d',
                         textShadow: '0 0 10px rgba(255, 77, 77, 0.5)',
                         fontWeight: 700
                     }}
                 >
-                    HOLA
+                    INICIAR SESION
                 </Typography>
                 <Typography
                     variant="subtitle1"
@@ -168,7 +169,7 @@ const Login = () => {
                         fontStyle: 'italic'
                     }}
                 >
-                    linda
+
                 </Typography>
 
                 {error && (
